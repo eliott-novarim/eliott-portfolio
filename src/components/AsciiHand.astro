@@ -1,0 +1,15 @@
+---
+import fallback from '../generated/ascii-hand.txt?raw';
+---
+
+<figure class="ascii" data-ascii aria-hidden="true">
+  <canvas></canvas>
+  <pre>{fallback.replace(/\n$/, '')}</pre>
+</figure>
+
+<script>
+  import { mountAsciiHand } from '../scripts/ascii-hand.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-ascii]');
+  if (root) void mountAsciiHand(root);
+</script>

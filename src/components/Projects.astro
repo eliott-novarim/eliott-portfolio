@@ -1,0 +1,46 @@
+---
+import { t, type Locale } from '../i18n/index.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+
+// Previews light up on their own the day an image lands in src/assets/projects.
+const previews = import.meta.glob<{ src: string; width: number; height: number }>(
+  '../assets/projects/*.{png,jpg,jpeg,webp,avif}',
+  { eager: true, import: 'default' },
+);
+
+function previewFor(slug: string): string | undefined {
+  const key = Object.keys(previews).find((path) => path.split('/').pop()?.replace(/\.\w+$/, '') === slug);
+  return key ? previews[key]?.src : undefined;
+}
+---
+
+<section class="section shell" id="projects" aria-labelledby="projects-label">
+  <h2 class="section-label" id="projects-label" data-reveal style="--delay:0ms">{s.projects.label}</h2>
+
+  <div class="rows" data-rows>
+    <div class="row-marker" aria-hidden="true"></div>
+    {
+      s.projects.items.map((item, i) => (
+        <article
+          class="row project-row"
+          data-row
+          data-preview={previewFor(item.slug)}
+          data-reveal
+          style={`--delay:${70 + i * 70}ms`}
+        >
+          <h3 class="row-title">
+            <strong>{item.title}</strong>
+          </h3>
+          <p class="row-detail">{item.detail}</p>
+          <p class="project-meta">{item.meta}</p>
+        </article>
+      ))
+    }
+  </div>
+</section>
