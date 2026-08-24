@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import Experience from './Experience.astro';
+import Projects from './Projects.astro';
+import Beyond from './Beyond.astro';
+import Footer from './Footer.astro';
+import { t, type Locale } from '../i18n/index.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<Base locale={locale}>
+  <a class="skip-link" href="#main">{s.nav.skip}</a>
+  <Header locale={locale} />
+
+  <main id="main" tabindex="-1">
+    <Hero locale={locale} />
+    <Experience locale={locale} />
+    <Projects locale={locale} />
+    <Beyond locale={locale} />
+  </main>
+
+  <Footer locale={locale} />
+</Base>
+
+<script>
+  import { mountReveal } from '../scripts/reveal.ts';
+  import { mountRows } from '../scripts/rows.ts';
+  import { mountProjectPreview } from '../scripts/project-preview.ts';
+  import { mountChrome } from '../scripts/chrome.ts';
+
+  mountChrome();
+  mountReveal();
+  mountRows();
+  mountProjectPreview();
+</script>

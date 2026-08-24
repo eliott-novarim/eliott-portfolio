@@ -1,0 +1,72 @@
+---
+import map from '../generated/dot-map.json';
+import { VISITED } from '../i18n/countries.ts';
+import { t, type Locale } from '../i18n/index.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+
+/** Each dot is a zero-length segment; the round line cap draws the circle. */
+function dots(flat: readonly number[]): string {
+  let d = '';
+  for (let i = 0; i < flat.length; i += 2) d += `M${flat[i]} ${flat[i + 1]}h.01`;
+  return d;
+}
+
+const visited = map.visited as Record<string, number[]>;
+const countries = VISITED.map((c) => ({
+  code: c.code,
+  name: locale === 'fr' ? c.fr : c.en,
+  d: dots(visited[c.code] ?? []),
+}));
+---
+
+<figure class="worldmap" data-worldmap>
+  <div class="worldmap-frame">
+    <svg viewBox={`-1.5 -1.5 ${map.cols + 3} ${map.rows + 3}`} aria-hidden="true">
+      <defs>{countries.map((c) => <path id={`dots-${c.code}`} d={c.d} />)}</defs>
+
+      <path class="dots-land" d={dots(map.land)} stroke-width="0.62"></path>
+
+      <g class="dots-visited" stroke-width="0.62">
+        {countries.map((c) => <use href={`#dots-${c.code}`} data-paint={c.code} />)}
+      </g>
+
+      <g class="dots-hit" stroke-width="3.4">
+        {countries.map((c) => <use href={`#dots-${c.code}`} data-country={c.code} data-name={c.name} />)}
+      </g>
+    </svg>
+
+    <div class="worldmap-tooltip" data-tooltip aria-hidden="true"></div>
+  </div>
+
+  <figcaption class="worldmap-counter">{s.beyond.counter(countries.length)}</figcaption>
+
+  <ul class="visually-hidden">
+    {countries.map((c) => <li>{c.name}</li>)}
+  </ul>
+</figure>
+
+<style>
+  .dots-hit {
+    stroke: transparent;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .dots-hit use {
+    pointer-events: stroke;
+    cursor: default;
+  }
+</style>
+
+<script>
+  import { mountWorldMap } from '../scripts/worldmap.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-worldmap]');
+  if (root) mountWorldMap(root);
+</script>

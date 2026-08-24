@@ -1,0 +1,22 @@
+---
+import AsciiHand from './AsciiHand.astro';
+import { t, type Locale } from '../i18n/index.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<section class="hero shell" data-reveal-group>
+  <div>
+    <h1 class="hero-display" data-reveal style="--delay:120ms">{s.hero.display}</h1>
+    <p class="hero-anchor" data-reveal style="--delay:260ms">{s.hero.anchor}</p>
+  </div>
+
+  <div class="hero-figure" data-reveal style="--delay:400ms">
+    <AsciiHand />
+  </div>
+</section>

@@ -1,0 +1,36 @@
+---
+import { EMAILS, PROFILES } from '../data/links.ts';
+import { t, type Locale } from '../i18n/index.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<footer class="site-footer shell">
+  <div class="footer-grid">
+    <div class="link-row" data-reveal style="--delay:0ms">
+      {
+        PROFILES.map((p) => (
+          <a href={p.href} rel="me noopener" target="_blank">
+            {p.name}
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="email-row" data-reveal style="--delay:70ms">
+      <div>
+        <span class="email-label">{s.footer.emails.personal}</span>
+        <a href={`mailto:${EMAILS.personal}`}>{EMAILS.personal}</a>
+      </div>
+      <div>
+        <span class="email-label">{s.footer.emails.business}</span>
+        <a href={`mailto:${EMAILS.business}`}>{EMAILS.business}</a>
+      </div>
+    </div>
+  </div>
+</footer>
